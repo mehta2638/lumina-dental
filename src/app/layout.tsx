@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 
 import { ThemeProvider } from "@/components/shared/theme-provider";
 import { JsonLd } from "@/components/shared/json-ld";
+import { PremiumInteractions } from "@/components/shared/premium-interactions";
 import { SITE } from "@/lib/constants";
 import "./globals.css";
 
@@ -82,6 +83,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <PremiumInteractions />
         </ThemeProvider>
         <JsonLd />
       </body>

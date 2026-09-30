@@ -2,9 +2,9 @@
 
 import { useEffect, useRef } from "react";
 import {
+  animate,
   useInView,
   useMotionValue,
-  useSpring,
   useReducedMotion,
 } from "framer-motion";
 
@@ -24,21 +24,30 @@ export function AnimatedCounter({
   const reduced = useReducedMotion();
 
   const motionValue = useMotionValue(0);
-  const spring = useSpring(motionValue, { stiffness: 60, damping: 20 });
 
   useEffect(() => {
-    if (inView) motionValue.set(value);
-  }, [inView, value, motionValue]);
+    if (!inView) return;
+    if (reduced) {
+      motionValue.set(value);
+      return;
+    }
+
+    const controls = animate(motionValue, value, {
+      duration: 1.2,
+      ease: [0.16, 1, 0.3, 1],
+    });
+    return () => controls.stop();
+  }, [inView, value, motionValue, reduced]);
 
   useEffect(() => {
     if (reduced) {
       if (ref.current) ref.current.textContent = format(value) + suffix;
       return;
     }
-    return spring.on("change", (latest) => {
+    return motionValue.on("change", (latest) => {
       if (ref.current) ref.current.textContent = format(latest) + suffix;
     });
-  }, [spring, suffix, reduced, value]);
+  }, [motionValue, suffix, reduced, value]);
 
   return (
     <span ref={ref} className={className}>

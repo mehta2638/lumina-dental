@@ -2,11 +2,9 @@
 
 import { useCallback, useRef, useState } from "react";
 import Image from "next/image";
-import { MoveHorizontal } from "lucide-react";
 
 import { SectionHeading } from "@/components/shared/section-heading";
 import { CASES } from "@/lib/data";
-import { cn } from "@/lib/utils";
 
 export function BeforeAfter() {
   return (
@@ -40,6 +38,7 @@ interface ComparisonProps {
 
 function Comparison({ before, after, title }: ComparisonProps) {
   const [position, setPosition] = useState(50);
+  const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
 
@@ -55,16 +54,24 @@ function Comparison({ before, after, title }: ComparisonProps) {
     <figure className="flex flex-col gap-4">
       <div
         ref={containerRef}
-        className="relative aspect-[16/10] w-full cursor-ew-resize select-none overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-lifted)]"
+        className="relative aspect-[16/10] w-full cursor-ew-resize select-none overflow-hidden rounded-[1.75rem] border border-border bg-card"
         onPointerDown={(e) => {
           dragging.current = true;
+          setIsDragging(true);
           e.currentTarget.setPointerCapture(e.pointerId);
           updateFromClientX(e.clientX);
         }}
         onPointerMove={(e) => {
           if (dragging.current) updateFromClientX(e.clientX);
         }}
-        onPointerUp={() => (dragging.current = false)}
+        onPointerUp={() => {
+          dragging.current = false;
+          setIsDragging(false);
+        }}
+        onPointerCancel={() => {
+          dragging.current = false;
+          setIsDragging(false);
+        }}
       >
         {/* After (full background) */}
         <Image
@@ -74,14 +81,17 @@ function Comparison({ before, after, title }: ComparisonProps) {
           sizes="(max-width: 896px) 100vw, 896px"
           className="object-cover"
         />
-        <span className="absolute right-4 top-4 rounded-full bg-success px-3 py-1 text-xs font-semibold text-white">
+        <span className="meta-caps absolute right-4 top-4 rounded-full bg-primary/72 px-3 py-1.5 text-primary-foreground backdrop-blur-xl">
           После
         </span>
 
         {/* Before (clipped overlay) */}
         <div
           className="absolute inset-0 overflow-hidden"
-          style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}
+          style={{
+            clipPath: `inset(0 ${100 - position}% 0 0)`,
+            transition: isDragging ? "none" : "clip-path 220ms var(--ease-out)",
+          }}
         >
           <Image
             src={before}
@@ -90,22 +100,21 @@ function Comparison({ before, after, title }: ComparisonProps) {
             sizes="(max-width: 896px) 100vw, 896px"
             className="object-cover"
           />
-          <span className="absolute left-4 top-4 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
+          <span className="meta-caps absolute left-4 top-4 rounded-full bg-primary/72 px-3 py-1.5 text-primary-foreground backdrop-blur-xl">
             До
           </span>
         </div>
 
         {/* Divider handle */}
         <div
-          className="absolute inset-y-0 z-10 w-0.5 bg-white shadow-[0_0_12px_rgb(0_0_0/0.3)]"
-          style={{ left: `${position}%` }}
+          className="absolute inset-y-0 z-10 w-px bg-white/85"
+          style={{
+            left: `${position}%`,
+            transition: isDragging ? "none" : "left 220ms var(--ease-out)",
+          }}
         >
-          <div
-            className={cn(
-              "absolute top-1/2 grid size-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white text-primary shadow-lg",
-            )}
-          >
-            <MoveHorizontal className="size-5" />
+          <div className="absolute top-1/2 grid size-10 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-border bg-card/85 backdrop-blur-xl">
+            <span className="h-5 w-px bg-foreground/45" />
           </div>
         </div>
 
@@ -116,7 +125,8 @@ function Comparison({ before, after, title }: ComparisonProps) {
           max={100}
           value={position}
           onChange={(e) => setPosition(Number(e.target.value))}
-          aria-label="Сравнение до и после"
+          aria-label={`Сравнение до и после: ${title}`}
+          aria-valuetext={`${Math.round(position)} процентов изображения до`}
           className="absolute inset-0 z-20 h-full w-full cursor-ew-resize opacity-0"
         />
       </div>

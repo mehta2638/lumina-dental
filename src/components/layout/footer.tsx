@@ -6,12 +6,12 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border bg-card">
+    <footer className="border-t border-border bg-background">
       <div className="container-page py-16">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2.5">
-              <span className="grid size-9 place-items-center rounded-xl bg-primary text-primary-foreground text-sm font-bold">
+              <span className="grid size-9 place-items-center rounded-xl bg-primary text-sm font-bold text-primary-foreground">
                 L
               </span>
               <span className="text-lg font-bold">{SITE.name}</span>
@@ -20,14 +20,14 @@ export function Footer() {
               Премиальная стоматология полного цикла. Здоровье и эстетика улыбки,
               которым доверяют.
             </p>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-x-4 gap-y-2">
               {SITE.socials.map((s) => (
                 <a
                   key={s.label}
                   href={s.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-accent hover:text-accent"
+                  className="meta-caps underline-offset-8 transition-colors hover:text-accent hover:underline"
                 >
                   {s.label}
                 </a>
@@ -36,12 +36,12 @@ export function Footer() {
           </div>
 
           <nav className="flex flex-col gap-3" aria-label="Разделы">
-            <h3 className="text-sm font-semibold">Навигация</h3>
+            <h3 className="meta-caps text-foreground">Навигация</h3>
             {NAV_LINKS.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm text-muted-foreground transition-colors hover:text-accent"
+                className="meta-caps w-fit underline-offset-8 transition-colors hover:text-accent hover:underline"
               >
                 {link.label}
               </a>
@@ -49,16 +49,16 @@ export function Footer() {
           </nav>
 
           <div className="flex flex-col gap-3">
-            <h3 className="text-sm font-semibold">Контакты</h3>
+            <h3 className="meta-caps text-foreground">Контакты</h3>
             <a
               href={SITE.phoneHref}
-              className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-accent"
+              className="flex items-center gap-2 text-sm text-muted-foreground underline-offset-8 transition-colors hover:text-accent hover:underline"
             >
               <Phone className="size-4" /> {SITE.phone}
             </a>
             <a
               href={SITE.emailHref}
-              className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-accent"
+              className="flex items-center gap-2 text-sm text-muted-foreground underline-offset-8 transition-colors hover:text-accent hover:underline"
             >
               <Mail className="size-4" /> {SITE.email}
             </a>
@@ -68,7 +68,7 @@ export function Footer() {
           </div>
 
           <div className="flex flex-col gap-3">
-            <h3 className="text-sm font-semibold">Часы работы</h3>
+            <h3 className="meta-caps text-foreground">Часы работы</h3>
             {SITE.hours.map((h) => (
               <div
                 key={h.day}
@@ -86,10 +86,10 @@ export function Footer() {
             © {year} {SITE.legalName}. Все права защищены.
           </p>
           <div className="flex gap-6">
-            <a href="/privacy" className="transition-colors hover:text-accent">
+            <a href="/privacy" className="underline-offset-8 transition-colors hover:text-accent hover:underline">
               Политика конфиденциальности
             </a>
-            <a href="/terms" className="transition-colors hover:text-accent">
+            <a href="/terms" className="underline-offset-8 transition-colors hover:text-accent hover:underline">
               Пользовательское соглашение
             </a>
           </div>

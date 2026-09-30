@@ -2,10 +2,9 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { CalendarCheck } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { SectionHeading } from "@/components/shared/section-heading";
-import { Button } from "@/components/ui/button";
 import { RatingStars } from "@/components/shared/rating-stars";
 import { DOCTORS } from "@/lib/data";
 import { fadeUp, stagger, viewportOnce } from "@/lib/animations";
@@ -31,21 +30,21 @@ export function Doctors() {
             <motion.article
               key={doctor.id}
               variants={fadeUp}
-              className="group flex flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-[var(--shadow-soft)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[var(--shadow-lifted)]"
+              className="group flex flex-col overflow-hidden rounded-[1.75rem] border border-border bg-card tonal-hover"
             >
-              <div className="relative aspect-[4/5] overflow-hidden">
+              <div className="relative aspect-[4/5] overflow-hidden border-b border-border">
                 <Image
                   src={doctor.image}
                   alt={`${doctor.name} — ${doctor.specialty}`}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="image-muted object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                 />
-                <div className="absolute inset-x-3 bottom-3 flex flex-wrap gap-1.5">
+                <div className="absolute inset-x-4 bottom-4 flex flex-wrap gap-1.5">
                   {doctor.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="glass rounded-full px-2.5 py-1 text-xs font-medium"
+                      className="rounded-full border border-white/35 bg-white/58 px-2.5 py-1 text-[0.68rem] font-semibold text-foreground backdrop-blur-xl"
                     >
                       {tag}
                     </span>
@@ -53,33 +52,30 @@ export function Doctors() {
                 </div>
               </div>
 
-              <div className="flex flex-1 flex-col gap-3 p-5">
+              <div className="flex flex-1 flex-col gap-4 p-5">
                 <div>
-                  <h3 className="text-lg font-bold">{doctor.name}</h3>
-                  <p className="text-sm text-accent">{doctor.specialty}</p>
+                  <h3 className="text-xl font-semibold tracking-[-0.03em]">{doctor.name}</h3>
+                  <p className="meta-caps mt-1 text-accent">{doctor.specialty}</p>
                 </div>
 
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-y border-border py-3 text-xs text-muted-foreground">
                   <RatingStars rating={doctor.rating} />
                   <span className="font-semibold text-foreground">
                     {doctor.rating.toFixed(1)}
                   </span>
-                  <span>· {doctor.reviews} отзывов</span>
+                  <span>{doctor.reviews} отзывов</span>
+                  <span className="hidden h-3 w-px bg-border sm:block" />
+                  <span>Опыт {doctor.experienceYears} лет</span>
                 </div>
 
-                <p className="text-sm text-muted-foreground">
-                  Опыт работы{" "}
-                  <span className="font-semibold text-foreground">
-                    {doctor.experienceYears} лет
-                  </span>
-                </p>
-
-                <Button asChild variant="outline" size="sm" className="mt-auto w-full">
-                  <a href="#appointment">
-                    <CalendarCheck className="size-4" />
+                <a
+                  href="#appointment"
+                  data-magnetic="true"
+                  className="group/cta mt-auto inline-flex items-center justify-between rounded-full border border-border px-4 py-3 text-sm font-semibold transition-colors hover:border-accent hover:text-accent"
+                >
                     Записаться
-                  </a>
-                </Button>
+                  <ArrowRight className="size-4 transition-transform duration-300 group-hover/cta:translate-x-1" />
+                </a>
               </div>
             </motion.article>
           ))}

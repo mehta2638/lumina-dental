@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent, useReducedMotion } from "framer-motion";
 import { Menu, X, Phone } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const reducedMotion = useReducedMotion();
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -28,20 +29,20 @@ export function Header() {
 
   return (
     <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      initial={reducedMotion ? { opacity: 0 } : { y: -100 }}
+      animate={reducedMotion ? { opacity: 1 } : { y: 0 }}
+      transition={{ duration: reducedMotion ? 0.18 : 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="fixed inset-x-0 top-0 z-50"
     >
       <div className="container-page py-3">
         <nav
           className={cn(
-            "flex items-center justify-between rounded-3xl px-4 py-2.5 transition-all duration-300 sm:px-6",
-            scrolled ? "glass shadow-[var(--shadow-soft)]" : "bg-transparent",
+            "flex items-center justify-between rounded-3xl border px-4 py-2.5 transition-all duration-300 sm:px-6",
+            scrolled ? "glass border-border" : "border-transparent bg-transparent",
           )}
         >
           <a href="#top" className="flex items-center gap-2.5" aria-label={SITE.name}>
-            <span className="grid size-9 place-items-center rounded-xl bg-primary text-primary-foreground">
+                <span className="grid size-9 place-items-center rounded-xl bg-primary text-primary-foreground">
               <LuminaMark />
             </span>
             <span className="text-lg font-bold tracking-tight">{SITE.name}</span>
@@ -52,7 +53,7 @@ export function Header() {
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className="rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  className="meta-caps rounded-full px-4 py-2 transition-colors hover:text-accent"
                 >
                   {link.label}
                 </a>
@@ -69,7 +70,7 @@ export function Header() {
               {SITE.phone}
             </a>
             <ThemeToggle className="hidden sm:flex" />
-            <Button asChild size="md" className="hidden sm:inline-flex">
+            <Button asChild size="md" className="hidden sm:inline-flex" data-magnetic="true">
               <a href="#appointment">Записаться</a>
             </Button>
             <button
@@ -95,11 +96,11 @@ export function Header() {
           >
             <div className="container-page">
               <motion.div
-                initial={{ opacity: 0, y: -12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.25 }}
-                className="glass flex flex-col gap-1 rounded-3xl p-4 shadow-[var(--shadow-lifted)]"
+                initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -12 }}
+                animate={reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -12 }}
+                transition={{ duration: reducedMotion ? 0.18 : 0.25 }}
+                className="glass flex flex-col gap-1 rounded-3xl p-4"
               >
                 {NAV_LINKS.map((link) => (
                   <a

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 
 import { SectionHeading } from "@/components/shared/section-heading";
 import {
@@ -9,13 +10,12 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
 import { FAQ } from "@/lib/data";
 import { fadeUp, stagger, viewportOnce } from "@/lib/animations";
 
 export function Faq() {
   return (
-    <section id="faq" className="scroll-mt-24 bg-muted/40 py-20 md:py-28">
+    <section id="faq" className="scroll-mt-24 bg-muted/35 py-20 md:py-28">
       <div className="container-page grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
         <div className="lg:sticky lg:top-28 lg:self-start">
           <SectionHeading
@@ -24,9 +24,14 @@ export function Faq() {
             title="Отвечаем на частые вопросы"
             description="Не нашли ответ? Позвоните нам — с радостью проконсультируем."
           />
-          <Button asChild className="mt-6" variant="dark">
-            <a href="#appointment">Задать вопрос врачу</a>
-          </Button>
+          <a
+            href="#appointment"
+            data-magnetic="true"
+            className="group mt-6 inline-flex items-center gap-2 text-sm font-semibold underline-offset-8 transition-colors hover:text-accent hover:underline"
+          >
+            Задать вопрос врачу
+            <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+          </a>
         </div>
 
         <motion.div
@@ -35,7 +40,7 @@ export function Faq() {
           whileInView="visible"
           viewport={viewportOnce}
         >
-          <Accordion type="single" collapsible className="flex flex-col gap-3">
+          <Accordion type="single" collapsible className="border-t border-border">
             {FAQ.map((item) => (
               <motion.div key={item.id} variants={fadeUp}>
                 <AccordionItem value={item.id}>

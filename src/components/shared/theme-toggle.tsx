@@ -2,7 +2,7 @@
 
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 import { useMounted } from "@/hooks/use-mounted";
 import { cn } from "@/lib/utils";
@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 export function ThemeToggle({ className }: { className?: string }) {
   const { resolvedTheme, setTheme } = useTheme();
   const mounted = useMounted();
+  const reducedMotion = useReducedMotion();
   const isDark = resolvedTheme === "dark";
 
   return (
@@ -26,10 +27,10 @@ export function ThemeToggle({ className }: { className?: string }) {
         {mounted && (
           <motion.span
             key={isDark ? "moon" : "sun"}
-            initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
-            animate={{ opacity: 1, rotate: 0, scale: 1 }}
-            exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
-            transition={{ duration: 0.25 }}
+            initial={reducedMotion ? { opacity: 0 } : { opacity: 0, rotate: -90, scale: 0.5 }}
+            animate={reducedMotion ? { opacity: 1 } : { opacity: 1, rotate: 0, scale: 1 }}
+            exit={reducedMotion ? { opacity: 0 } : { opacity: 0, rotate: 90, scale: 0.5 }}
+            transition={{ duration: reducedMotion ? 0.18 : 0.25 }}
           >
             {isDark ? (
               <Moon className="size-5 text-accent" />

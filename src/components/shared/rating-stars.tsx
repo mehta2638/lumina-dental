@@ -21,7 +21,7 @@ export function RatingStars({ rating, size = 16, className }: RatingStarsProps) 
           style={{ width: size, height: size }}
           className={cn(
             i < Math.round(rating)
-              ? "fill-amber-400 text-amber-400"
+              ? "fill-accent text-accent"
               : "fill-transparent text-border",
           )}
         />

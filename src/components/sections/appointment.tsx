@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Loader2, Check, CalendarCheck, ShieldCheck, PhoneCall } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -29,6 +29,7 @@ type Status = "idle" | "submitting" | "success" | "error";
 
 export function Appointment() {
   const [status, setStatus] = useState<Status>("idle");
+  const reducedMotion = useReducedMotion();
 
   const {
     register,
@@ -70,40 +71,32 @@ export function Appointment() {
   return (
     <section id="appointment" className="scroll-mt-24 py-20 md:py-28">
       <div className="container-page">
-        <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-[var(--shadow-lifted)]">
-          <div className="grid lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="overflow-hidden rounded-[1.75rem] border border-border bg-card">
+          <div className="grid lg:grid-cols-[0.82fr_1.18fr]">
             {/* Left — value proposition */}
-            <div className="relative flex flex-col justify-between gap-10 bg-primary p-8 text-primary-foreground sm:p-12">
-              <div
-                aria-hidden
-                className="absolute inset-0 opacity-30"
-                style={{
-                  backgroundImage:
-                    "radial-gradient(circle at 20% 20%, rgb(20 184 166 / 0.5), transparent 45%), radial-gradient(circle at 80% 80%, rgb(14 165 233 / 0.4), transparent 45%)",
-                }}
-              />
-              <div className="relative flex flex-col gap-4">
-                <span className="w-fit rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider">
+            <div className="relative flex flex-col justify-between gap-10 border-b border-border bg-muted/35 p-8 sm:p-12 lg:border-b-0 lg:border-r">
+              <div className="flex flex-col gap-4">
+                <span className="meta-caps text-accent">
                   Запись на приём
                 </span>
-                <h2 className="text-3xl font-bold leading-tight sm:text-4xl">
+                <h2 className="text-3xl font-semibold leading-tight tracking-[-0.04em] sm:text-4xl">
                   Первая консультация — бесплатно
                 </h2>
-                <p className="max-w-sm text-primary-foreground/70">
+                <p className="max-w-sm text-muted-foreground">
                   Оставьте заявку, и администратор перезвонит в течение 15 минут,
                   чтобы подтвердить удобное время.
                 </p>
               </div>
 
-              <ul className="relative flex flex-col gap-4">
+              <ul className="flex flex-col border-y border-border">
                 {[
                   { icon: ShieldCheck, text: "3D-диагностика и план лечения" },
                   { icon: CalendarCheck, text: "Удобное время без очередей" },
                   { icon: PhoneCall, text: "Ответ в течение 15 минут" },
                 ].map(({ icon: Icon, text }) => (
-                  <li key={text} className="flex items-center gap-3 text-sm">
-                    <span className="grid size-9 place-items-center rounded-xl bg-white/10 text-accent">
-                      <Icon className="size-5" />
+                  <li key={text} className="flex items-center gap-3 border-b border-border py-4 text-sm last:border-b-0">
+                    <span className="grid size-9 place-items-center rounded-xl border border-border text-accent">
+                      <Icon className="size-5 stroke-[1.5]" />
                     </span>
                     {text}
                   </li>
@@ -115,7 +108,11 @@ export function Appointment() {
             <div className="p-8 sm:p-12">
               <AnimatePresence mode="wait">
                 {status === "success" ? (
-                  <SuccessState key="success" onReset={() => setStatus("idle")} />
+                  <SuccessState
+                    key="success"
+                    onReset={() => setStatus("idle")}
+                    reducedMotion={!!reducedMotion}
+                  />
                 ) : (
                   <motion.form
                     key="form"
@@ -125,7 +122,7 @@ export function Appointment() {
                     exit={{ opacity: 0 }}
                     onSubmit={handleSubmit(onSubmit)}
                     noValidate
-                    className="flex flex-col gap-5"
+                    className="mx-auto flex max-w-2xl flex-col gap-5"
                   >
                     {/* Honeypot — hidden from users */}
                     <input
@@ -137,12 +134,13 @@ export function Appointment() {
                       {...register("company")}
                     />
 
-                    <div className="grid gap-5 sm:grid-cols-2">
+                    <div className="grid gap-5">
                       <Field label="Имя" error={errors.name?.message} htmlFor="name">
                         <Input
                           id="name"
                           placeholder="Как к вам обращаться"
                           aria-invalid={!!errors.name}
+                          aria-describedby={errors.name ? "name-error" : undefined}
                           {...register("name")}
                         />
                       </Field>
@@ -154,6 +152,7 @@ export function Appointment() {
                           inputMode="tel"
                           placeholder="+7 (___) ___-__-__"
                           aria-invalid={!!errors.phone}
+                          aria-describedby={errors.phone ? "phone-error" : undefined}
                           {...register("phone")}
                         />
                       </Field>
@@ -165,7 +164,11 @@ export function Appointment() {
                         name="service"
                         render={({ field }) => (
                           <Select value={field.value} onValueChange={field.onChange}>
-                            <SelectTrigger id="service" aria-invalid={!!errors.service}>
+                            <SelectTrigger
+                              id="service"
+                              aria-invalid={!!errors.service}
+                              aria-describedby={errors.service ? "service-error" : undefined}
+                            >
                               <SelectValue placeholder="Выберите направление" />
                             </SelectTrigger>
                             <SelectContent>
@@ -180,13 +183,14 @@ export function Appointment() {
                       />
                     </Field>
 
-                    <div className="grid gap-5 sm:grid-cols-2">
+                    <div className="grid gap-5">
                       <Field label="Дата" error={errors.date?.message} htmlFor="date">
                         <Input
                           id="date"
                           type="date"
                           min={today}
                           aria-invalid={!!errors.date}
+                          aria-describedby={errors.date ? "date-error" : undefined}
                           {...register("date")}
                         />
                       </Field>
@@ -197,7 +201,11 @@ export function Appointment() {
                           name="time"
                           render={({ field }) => (
                             <Select value={field.value} onValueChange={field.onChange}>
-                              <SelectTrigger id="time" aria-invalid={!!errors.time}>
+                              <SelectTrigger
+                                id="time"
+                                aria-invalid={!!errors.time}
+                                aria-describedby={errors.time ? "time-error" : undefined}
+                              >
                                 <SelectValue placeholder="Выберите время" />
                               </SelectTrigger>
                               <SelectContent>
@@ -218,6 +226,7 @@ export function Appointment() {
                         id="comment"
                         placeholder="Опишите, что вас беспокоит (необязательно)"
                         rows={3}
+                        aria-describedby={errors.comment ? "comment-error" : undefined}
                         {...register("comment")}
                       />
                     </Field>
@@ -236,6 +245,7 @@ export function Appointment() {
                       type="submit"
                       size="lg"
                       disabled={status === "submitting"}
+                      data-magnetic="true"
                       className="w-full"
                     >
                       {status === "submitting" ? (
@@ -282,12 +292,14 @@ function Field({
   optional?: boolean;
   children: React.ReactNode;
 }) {
+  const reducedMotion = useReducedMotion();
+
   return (
     <div className="flex flex-col gap-2">
-      <Label htmlFor={htmlFor} className="flex items-center gap-1.5">
+      <Label htmlFor={htmlFor} className="meta-caps flex items-center gap-1.5">
         {label}
         {optional && (
-          <span className="text-xs font-normal text-muted-foreground">
+          <span className="text-[0.65rem] font-normal normal-case tracking-normal text-muted-foreground">
             — необязательно
           </span>
         )}
@@ -296,9 +308,10 @@ function Field({
       <AnimatePresence>
         {error && (
           <motion.p
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
+            id={`${htmlFor}-error`}
+            initial={reducedMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
+            animate={reducedMotion ? { opacity: 1 } : { opacity: 1, height: "auto" }}
+            exit={reducedMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
             className="text-xs text-danger"
           >
             {error}
@@ -309,24 +322,34 @@ function Field({
   );
 }
 
-function SuccessState({ onReset }: { onReset: () => void }) {
+function SuccessState({
+  onReset,
+  reducedMotion,
+}: {
+  onReset: () => void;
+  reducedMotion: boolean;
+}) {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
+      initial={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95 }}
+      animate={reducedMotion ? { opacity: 1 } : { opacity: 1, scale: 1 }}
       exit={{ opacity: 0 }}
       className="flex h-full min-h-[420px] flex-col items-center justify-center gap-6 text-center"
     >
       <motion.span
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
+        initial={reducedMotion ? { opacity: 0 } : { scale: 0 }}
+        animate={reducedMotion ? { opacity: 1 } : { scale: 1 }}
+        transition={
+          reducedMotion
+            ? { duration: 0.18 }
+            : { type: "spring", stiffness: 200, damping: 15, delay: 0.1 }
+        }
         className="grid size-20 place-items-center rounded-full bg-success/12 text-success"
       >
         <motion.span
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
+          transition={{ duration: reducedMotion ? 0.01 : 0.4, delay: reducedMotion ? 0 : 0.3 }}
         >
           <Check className="size-10" strokeWidth={3} />
         </motion.span>

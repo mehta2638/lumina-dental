@@ -23,18 +23,20 @@ export function WhyUs() {
           viewport={viewportOnce}
           className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
         >
-          {ADVANTAGES.map((item) => (
+          {ADVANTAGES.map((item, index) => (
             <motion.div
               key={item.id}
               variants={fadeUp}
-              className="group relative flex flex-col gap-4 overflow-hidden rounded-3xl border border-border bg-card p-7 shadow-[var(--shadow-soft)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-lifted)]"
+              className="group border-t border-border py-8 lg:min-h-64"
             >
-              <div className="absolute -right-6 -top-6 size-24 rounded-full bg-accent/5 transition-transform duration-500 group-hover:scale-150" />
-              <span className="relative grid size-14 place-items-center rounded-2xl bg-primary text-primary-foreground">
-                <item.icon className="size-7" />
-              </span>
-              <h3 className="relative text-lg font-bold">{item.title}</h3>
-              <p className="relative text-sm leading-relaxed text-muted-foreground">
+              <div className="mb-10 flex items-center justify-between">
+                <span className="meta-caps text-accent">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <item.icon className="size-6 stroke-[1.5] text-muted-foreground transition-colors group-hover:text-accent" />
+              </div>
+              <h3 className="text-xl font-semibold tracking-[-0.03em]">{item.title}</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
                 {item.description}
               </p>
             </motion.div>
